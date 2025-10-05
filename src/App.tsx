@@ -1,8 +1,8 @@
 import '@mantine/core/styles.css';
 import { MantineProvider } from '@mantine/core';
 import { Routes, Route } from 'react-router-dom';
-import Signup from './pages/landing/Signup';
-import Login from './pages/landing/Login';
+import Signup from './pages/auth/Signup';
+import Login from './pages/auth/Login';
 
 function App() {
   return (
