@@ -9,13 +9,17 @@ import {
   Text,
   TextInput,
   Title,
+  useMantineTheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { z } from 'zod';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+
 import classes from './auth.module.css';
 import type { LoginFormValues } from '../types/auth.types';
-import { Link } from 'react-router-dom';
+import { login } from '../services/auth.services';
 
 const formSchema = z.object({
   email: z.string().trim().check(z.email()),
@@ -24,6 +28,9 @@ const formSchema = z.object({
 });
 
 function LoginForm() {
+  const [errMsg, setErrMsg] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const theme = useMantineTheme();
   const form = useForm<LoginFormValues>({
     initialValues: {
       email: '',
@@ -33,8 +40,20 @@ function LoginForm() {
     validate: zod4Resolver(formSchema),
   });
 
-  const handleSubmit = (values: LoginFormValues) => {
-    formSchema.parse(values);
+  const handleSubmit = async (values: LoginFormValues) => {
+    setIsLoading(true);
+    setErrMsg('');
+    try {
+      await login(formSchema.parse(values));
+    } catch (err: any) {
+      const errMessage = err.response?.data?.message || err.message;
+      setErrMsg(errMessage);
+    }
+    setIsLoading(false);
+  };
+
+  const handleFocus = () => {
+    errMsg !== '' && setErrMsg('');
   };
   return (
     <Container size={420} my={40}>
@@ -55,16 +74,16 @@ function LoginForm() {
             label="Email"
             placeholder="you@mantine.dev"
             radius="md"
-            key={form.key('email')}
             {...form.getInputProps('email')}
+            onFocus={handleFocus}
           />
           <PasswordInput
             label="Password"
             placeholder="Your password"
             mt="md"
             radius="md"
-            key={form.key('password')}
             {...form.getInputProps('password')}
+            onFocus={handleFocus}
           />
           {/* <Group justify="space-between" mt="lg">
             <Checkbox
@@ -74,11 +93,28 @@ function LoginForm() {
               {...form.getInputProps('rememberMe')}
             />
           </Group> */}
-          <Button fullWidth type="submit" variant="light" mt="xl" radius="md">
+          <Button
+            fullWidth
+            type="submit"
+            variant="light"
+            mt="xl"
+            radius="md"
+            loading={isLoading}
+          >
             Sign in
           </Button>
         </form>
       </Paper>
+      {errMsg !== '' && (
+        <Text
+          c={theme.colors.red[5]}
+          size="sm"
+          mt="xs"
+          style={{ textAlign: 'center' }}
+        >
+          {errMsg}
+        </Text>
+      )}
     </Container>
   );
 }
