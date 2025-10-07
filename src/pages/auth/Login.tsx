@@ -1,5 +1,7 @@
+import LoginForm from '../../features/auth/components/LoginForm';
+
 function Login() {
-  return <div>Login Page</div>;
+  return <LoginForm />;
 }
 
 export default Login;
