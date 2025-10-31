@@ -15,7 +15,7 @@ import { useForm } from '@mantine/form';
 import { z } from 'zod';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import classes from './auth.module.css';
 import type { LoginFormValues } from '../types/auth.types';
@@ -30,7 +30,9 @@ const formSchema = z.object({
 function LoginForm() {
   const [errMsg, setErrMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
   const theme = useMantineTheme();
+  const navigate = useNavigate();
   const form = useForm<LoginFormValues>({
     initialValues: {
       email: '',
@@ -44,7 +46,8 @@ function LoginForm() {
     setIsLoading(true);
     setErrMsg('');
     try {
-      await login(formSchema.parse(values));
+      const res = await login(formSchema.parse(values));
+      navigate(`/${res.data.userId}`);
     } catch (err: any) {
       const errMessage = err.response?.data?.message || err.message;
       setErrMsg(errMessage);

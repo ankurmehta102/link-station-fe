@@ -1,7 +1,7 @@
-import { AppShell, Burger, Group, NavLink } from '@mantine/core';
+import { AppShell, Burger, Container, Group, NavLink } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useParams } from 'react-router-dom';
 import { IconLink, IconUserCog, IconPencil } from '@tabler/icons-react';
 
 const NAV_LINK_KEYS = {
@@ -13,7 +13,7 @@ const NAV_LINK_KEYS = {
 const getActiveNavLinkFromURL = (
   NavLinksKeys: typeof NAV_LINK_KEYS,
 ): number => {
-  const path = window.location.pathname.split('/')[1];
+  const path = window.location.pathname.split('/')[2] || '';
   for (const key in NavLinksKeys) {
     const typedKey = key as keyof typeof NavLinksKeys;
     if (typedKey.toLowerCase() === path.toLowerCase()) {
@@ -30,9 +30,11 @@ function MainLayout() {
     getActiveNavLinkFromURL(NAV_LINK_KEYS),
   );
 
+  const { userId } = useParams();
+
   return (
     <AppShell
-      padding="md"
+      // padding="md"
       header={{ height: 60 }}
       navbar={{
         width: 200,
@@ -59,7 +61,7 @@ function MainLayout() {
       <AppShell.Navbar p="md">
         <NavLink
           component={Link}
-          to="/"
+          to={`/${userId}`}
           label="Edit Profile"
           active={active === NAV_LINK_KEYS.PROFILE}
           onClick={() => setActive(NAV_LINK_KEYS.PROFILE)}
@@ -67,7 +69,7 @@ function MainLayout() {
         />
         <NavLink
           component={Link}
-          to="/links"
+          to={`/${userId}/links`}
           label="Manage Links"
           active={active === NAV_LINK_KEYS.LINKS}
           onClick={() => setActive(NAV_LINK_KEYS.LINKS)}
@@ -75,7 +77,7 @@ function MainLayout() {
         />
         <NavLink
           component={Link}
-          to="/account"
+          to={`/${userId}/account`}
           label="Account"
           active={active === NAV_LINK_KEYS.ACCOUNT}
           onClick={() => setActive(NAV_LINK_KEYS.ACCOUNT)}
@@ -83,7 +85,15 @@ function MainLayout() {
         />
       </AppShell.Navbar>
       <AppShell.Main>
-        <Outlet />
+        <Container
+          fluid
+          style={{
+            minHeight: 'calc(100dvh - var(--app-shell-header-offset)',
+            position: 'relative',
+          }}
+        >
+          <Outlet />
+        </Container>
       </AppShell.Main>
     </AppShell>
   );

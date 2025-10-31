@@ -8,6 +8,9 @@ import MainLayout from './components/layouts/MainLayout';
 import Profile from './pages/profile/Profile';
 import Links from './pages/links/Links';
 import Account from './pages/account/Account';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 function App() {
   const theme = createTheme({
@@ -26,17 +29,19 @@ function App() {
   });
 
   return (
-    <MantineProvider theme={theme} defaultColorScheme="dark">
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Profile />} />
-          <Route path="links" element={<Links />} />
-          <Route path="account" element={<Account />} />
-        </Route>
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-      </Routes>
-    </MantineProvider>
+    <QueryClientProvider client={queryClient}>
+      <MantineProvider theme={theme} defaultColorScheme="dark">
+        <Routes>
+          <Route path="/:userId" element={<MainLayout />}>
+            <Route index element={<Profile />} />
+            <Route path="links" element={<Links />} />
+            <Route path="account" element={<Account />} />
+          </Route>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </MantineProvider>
+    </QueryClientProvider>
   );
 }
 

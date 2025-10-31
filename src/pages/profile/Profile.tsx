@@ -1,5 +1,7 @@
+import EditProfileInfoForm from '../../features/profile/components/EditProfileInfoForm';
+
 function Profile() {
-  return <div>Profile</div>;
+  return <EditProfileInfoForm />;
 }
 
 export default Profile;
