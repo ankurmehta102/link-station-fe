@@ -88,7 +88,7 @@ function MainLayout() {
         <Container
           fluid
           style={{
-            minHeight: 'calc(100dvh - var(--app-shell-header-offset)',
+            minHeight: 'calc(100dvh - var(--app-shell-header-offset))',
             position: 'relative',
           }}
         >
