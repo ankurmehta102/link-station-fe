@@ -26,6 +26,7 @@ import {
 } from '../services/profile.services';
 import classes from './profile.module.css';
 import type { User } from '../../../lib/types';
+import { STORAGE_KEYS } from '../../../lib/helper';
 import type { EditProfileFormValues } from '../types/profile.type';
 
 const formSchema = z.object({
@@ -81,6 +82,10 @@ function EditProfileInfoForm() {
         bio: user.bio || '',
       });
       setPreview(user.profilePictureUrl);
+      localStorage.setItem(
+        STORAGE_KEYS.PROFILE_PICTURE_URL,
+        user.profilePictureUrl || '',
+      );
     }
   }, [user]);
 
@@ -97,7 +102,9 @@ function EditProfileInfoForm() {
       const imageUrl = URL.createObjectURL(file);
       setPreview(imageUrl);
     } else {
-      setPreview(user?.profilePictureUrl || '');
+      setPreview(
+        localStorage.getItem(STORAGE_KEYS.PROFILE_PICTURE_URL) || null,
+      );
     }
   };
 
@@ -109,7 +116,7 @@ function EditProfileInfoForm() {
         Number(userId),
         formSchema.parse(values),
       );
-      const user = res.data;
+      const user: User = res.data;
       form.setValues({
         firstName: user.firstName,
         lastName: user.lastName || '',
@@ -117,6 +124,10 @@ function EditProfileInfoForm() {
         bio: user.bio || '',
         profilePicture: null,
       });
+      localStorage.setItem(
+        STORAGE_KEYS.PROFILE_PICTURE_URL,
+        user.profilePictureUrl || '',
+      );
     } catch (err: any) {
       const errMessage = err.response?.data?.message || err.message || '';
       setErrMsg(errMessage);
