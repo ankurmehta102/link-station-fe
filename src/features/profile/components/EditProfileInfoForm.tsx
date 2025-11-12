@@ -2,6 +2,7 @@ import {
   Button,
   Container,
   Divider,
+  FileInput,
   Flex,
   LoadingOverlay,
   Stack,
@@ -10,19 +11,20 @@ import {
   TextInput,
   Title,
   useMantineTheme,
+  Image,
 } from '@mantine/core';
-import { useEffect, useState } from 'react';
 import { z } from 'zod';
+import { useForm } from '@mantine/form';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
 
-import classes from './profile.module.css';
-import { useForm } from '@mantine/form';
 import {
   fetchProfileData,
   updateProfileData,
 } from '../services/profile.services';
-import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
+import classes from './profile.module.css';
 import type { User } from '../../../lib/types';
 import type { EditProfileFormValues } from '../types/profile.type';
 
@@ -35,20 +37,17 @@ const formSchema = z.object({
   lastName: z.string().trim().max(30, 'maximum 30 characters allowed'),
   displayEmail: z.string().trim().check(z.email()).or(z.literal('')),
   bio: z.string().trim().max(150, 'maximum 150 characters allowed'),
+  profilePicture: z
+    .file()
+    .max(2 * 1024 * 1024)
+    .mime(['image/png', 'image/jpeg'])
+    .nullable(),
 });
-
-const getEditProfileFormValues = (user: User): EditProfileFormValues => {
-  return {
-    firstName: user.firstName,
-    lastName: user.lastName || '',
-    displayEmail: user.displayEmail || '',
-    bio: user.bio || '',
-  };
-};
 
 function EditProfileInfoForm() {
   const [errMsg, setErrMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
 
   const theme = useMantineTheme();
   const { userId } = useParams();
@@ -59,6 +58,7 @@ function EditProfileInfoForm() {
       lastName: '',
       displayEmail: '',
       bio: '',
+      profilePicture: null,
     },
     validate: zod4Resolver(formSchema),
   });
@@ -73,7 +73,15 @@ function EditProfileInfoForm() {
   });
 
   useEffect(() => {
-    if (user) form.setValues(getEditProfileFormValues(user));
+    if (user) {
+      form.setValues({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        displayEmail: user.displayEmail || '',
+        bio: user.bio || '',
+      });
+      setPreview(user.profilePictureUrl);
+    }
   }, [user]);
 
   useEffect(() => {
@@ -83,6 +91,16 @@ function EditProfileInfoForm() {
     }
   }, [error]);
 
+  const handleFileChange = (file: File | null) => {
+    form.setFieldValue('profilePicture', file);
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setPreview(imageUrl);
+    } else {
+      setPreview(user?.profilePictureUrl || '');
+    }
+  };
+
   const handleSubmit = async (values: EditProfileFormValues) => {
     setIsLoading(true);
     setErrMsg('');
@@ -91,7 +109,14 @@ function EditProfileInfoForm() {
         Number(userId),
         formSchema.parse(values),
       );
-      form.setValues(getEditProfileFormValues(res.data));
+      const user = res.data;
+      form.setValues({
+        firstName: user.firstName,
+        lastName: user.lastName || '',
+        displayEmail: user.displayEmail || '',
+        bio: user.bio || '',
+        profilePicture: null,
+      });
     } catch (err: any) {
       const errMessage = err.response?.data?.message || err.message || '';
       setErrMsg(errMessage);
@@ -111,14 +136,55 @@ function EditProfileInfoForm() {
         overlayProps={{ blur: 2 }}
         zIndex={99}
       />
-      <Container size={600}>
-        <Title ta="start" order={1} className={classes.title} pt="md">
+      <Container size={600} py="md">
+        <Title ta="start" order={1} className={classes.title}>
           Edit Profile
         </Title>
         <Divider mb={40} />
 
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack gap="sm">
+            <Flex
+              gap={'xs'}
+              justify="flex-start"
+              align="center"
+              style={{
+                backgroundColor: 'var(--mantine-primary-color-light-hover)',
+                borderRadius: 'var(--mantine-radius-md)',
+              }}
+              p="md"
+            >
+              <Image
+                src={preview}
+                alt="Profile preview"
+                w={110}
+                h={110}
+                fit="cover"
+                style={{
+                  border: '2px solid var(--mantine-primary-color-light-color)',
+                  borderRadius: '50%',
+                }}
+              />
+
+              <FileInput
+                label="Upload Image"
+                size="md"
+                placeholder="Click to upload image"
+                accept="image/png,image/jpeg"
+                clearable
+                styles={{
+                  root: { flex: 1, overflow: 'hidden' },
+                  input: {
+                    maxWidth: '100%',
+                    border:
+                      '1px solid var(--mantine-primary-color-light-color)',
+                  },
+                }}
+                {...form.getInputProps('profilePicture')}
+                onChange={handleFileChange}
+              />
+            </Flex>
+
             <Flex gap={'xs'} justify="space-between">
               <TextInput
                 label="First Name"
