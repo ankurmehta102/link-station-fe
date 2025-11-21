@@ -90,6 +90,7 @@ function MainLayout() {
           style={{
             minHeight: 'calc(100dvh - var(--app-shell-header-offset))',
             position: 'relative',
+            padding: 0,
           }}
         >
           <Outlet />
