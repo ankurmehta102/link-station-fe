@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 import LinkCard from '../../features/links/components/LinkCard';
 import type { Link } from '../../features/links/types/links.types';
 import { useEffect, useState } from 'react';
-import { IconAlertTriangle, IconCircleCheck } from '@tabler/icons-react';
+import AlertNotification from '../../components/ui/AlertNotification';
 
 function Links() {
   const [errMsg, setErrMsg] = useState('');
@@ -42,58 +42,18 @@ function Links() {
         zIndex={99}
       />
       {errMsg && (
-        <Notification
-          px="xl"
-          fw="bold"
-          icon={<IconAlertTriangle size={20} />}
+        <AlertNotification
+          type="error"
+          message={errMsg}
           onClose={() => setErrMsg('')}
-          styles={{
-            root: {
-              backgroundColor: 'var(--mantine-color-red-light)',
-              borderRadius: '0px',
-            },
-
-            description: {
-              color: 'var(--mantine-color-red-light-color)',
-            },
-            icon: {
-              backgroundColor: 'transparent',
-              color: 'var(--mantine-color-red-light-color)',
-            },
-            closeButton: {
-              color: 'var(--mantine-color-red-light-color)',
-            },
-          }}
-        >
-          {errMsg}
-        </Notification>
+        />
       )}
       {successMsg && (
-        <Notification
-          px="xl"
-          fw="bold"
-          icon={<IconCircleCheck size={23} />}
+        <AlertNotification
+          type="success"
+          message={successMsg}
           onClose={() => setSuccessMsg('')}
-          styles={{
-            root: {
-              backgroundColor: 'var(--mantine-color-green-light)',
-              borderRadius: '0px',
-            },
-
-            description: {
-              color: 'var(--mantine-color-green-light-color)',
-            },
-            icon: {
-              backgroundColor: 'transparent',
-              color: 'var(--mantine-color-green-light-color)',
-            },
-            closeButton: {
-              color: 'var(--mantine-color-green-light-color)',
-            },
-          }}
-        >
-          {successMsg}
-        </Notification>
+        />
       )}
 
       <Container size={600}>
