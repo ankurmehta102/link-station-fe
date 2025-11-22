@@ -1,13 +1,21 @@
-import { Container, Divider, LoadingOverlay, Text, Title } from '@mantine/core';
+import {
+  Container,
+  Divider,
+  LoadingOverlay,
+  Notification,
+  Title,
+} from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { fetchLinks } from '../../features/links/services/links.services';
 import { useParams } from 'react-router-dom';
 import LinkCard from '../../features/links/components/LinkCard';
 import type { Link } from '../../features/links/types/links.types';
 import { useEffect, useState } from 'react';
+import { IconAlertTriangle, IconCircleCheck } from '@tabler/icons-react';
 
 function Links() {
   const [errMsg, setErrMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
   const { userId } = useParams();
   const {
@@ -26,14 +34,6 @@ function Links() {
     }
   }, [error]);
 
-  const handleEdit = () => {
-    console.log('handleEdit');
-  };
-
-  const handleDelete = () => {
-    console.log('handleDelete');
-  };
-
   return (
     <>
       <LoadingOverlay
@@ -42,17 +42,60 @@ function Links() {
         zIndex={99}
       />
       {errMsg && (
-        <Text
-          ta="center"
-          py="sm"
-          style={{
-            backgroundColor: 'var(--mantine-color-red-light)',
-            color: 'var(--mantine-color-red-light-color)',
+        <Notification
+          px="xl"
+          fw="bold"
+          icon={<IconAlertTriangle size={20} />}
+          onClose={() => setErrMsg('')}
+          styles={{
+            root: {
+              backgroundColor: 'var(--mantine-color-red-light)',
+              borderRadius: '0px',
+            },
+
+            description: {
+              color: 'var(--mantine-color-red-light-color)',
+            },
+            icon: {
+              backgroundColor: 'transparent',
+              color: 'var(--mantine-color-red-light-color)',
+            },
+            closeButton: {
+              color: 'var(--mantine-color-red-light-color)',
+            },
           }}
         >
           {errMsg}
-        </Text>
+        </Notification>
       )}
+      {successMsg && (
+        <Notification
+          px="xl"
+          fw="bold"
+          icon={<IconCircleCheck size={23} />}
+          onClose={() => setSuccessMsg('')}
+          styles={{
+            root: {
+              backgroundColor: 'var(--mantine-color-green-light)',
+              borderRadius: '0px',
+            },
+
+            description: {
+              color: 'var(--mantine-color-green-light-color)',
+            },
+            icon: {
+              backgroundColor: 'transparent',
+              color: 'var(--mantine-color-green-light-color)',
+            },
+            closeButton: {
+              color: 'var(--mantine-color-green-light-color)',
+            },
+          }}
+        >
+          {successMsg}
+        </Notification>
+      )}
+
       <Container size={600}>
         <Title ta="start" order={1} pt="md">
           Links
@@ -61,12 +104,7 @@ function Links() {
         <Container fluid>
           {links && links.length ? (
             links.map((link: Link) => (
-              <LinkCard
-                key={link.linkId}
-                name={link.linkName}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-              />
+              <LinkCard key={link.linkId} link={link} />
             ))
           ) : (
             <Title ta="center" fw="bold" order={2}>
