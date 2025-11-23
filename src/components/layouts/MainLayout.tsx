@@ -3,6 +3,8 @@ import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { Link, Outlet, useParams } from 'react-router-dom';
 import { IconLink, IconUserCog, IconPencil } from '@tabler/icons-react';
+import AlertNotification from '../ui/AlertNotification';
+import { useUIStore } from '../../stores/uiStore';
 
 const NAV_LINK_KEYS = {
   PROFILE: 1,
@@ -31,6 +33,7 @@ function MainLayout() {
   );
 
   const { userId } = useParams();
+  const { errMsg, successMsg, setErrMsg, setSuccessMsg } = useUIStore();
 
   return (
     <AppShell
@@ -93,6 +96,20 @@ function MainLayout() {
             padding: 0,
           }}
         >
+          {errMsg && (
+            <AlertNotification
+              notificationType="error"
+              message={errMsg}
+              onClose={() => setErrMsg('')}
+            />
+          )}
+          {successMsg && (
+            <AlertNotification
+              notificationType="success"
+              message={successMsg}
+              onClose={() => setSuccessMsg('')}
+            />
+          )}
           <Outlet />
         </Container>
       </AppShell.Main>

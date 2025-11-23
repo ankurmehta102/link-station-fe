@@ -6,11 +6,9 @@ import {
   Flex,
   LoadingOverlay,
   Stack,
-  Text,
   Textarea,
   TextInput,
   Title,
-  useMantineTheme,
   Image,
 } from '@mantine/core';
 import { z } from 'zod';
@@ -28,6 +26,7 @@ import classes from './profile.module.css';
 import type { User } from '../../../lib/types';
 import { STORAGE_KEYS } from '../../../lib/helper';
 import type { EditProfileFormValues } from '../types/profile.type';
+import { useUIStore } from '../../../stores/uiStore';
 
 const formSchema = z.object({
   firstName: z
@@ -46,11 +45,10 @@ const formSchema = z.object({
 });
 
 function EditProfileInfoForm() {
-  const [errMsg, setErrMsg] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
 
-  const theme = useMantineTheme();
+  const { errMsg, isLoading, setErrMsg, setSuccessMsg, setIsLoading } =
+    useUIStore();
   const { userId } = useParams();
 
   const form = useForm<EditProfileFormValues>({
@@ -128,6 +126,7 @@ function EditProfileInfoForm() {
         STORAGE_KEYS.PROFILE_PICTURE_URL,
         user.profilePictureUrl || '',
       );
+      setSuccessMsg('Details updated successfully!');
     } catch (err: any) {
       const errMessage = err.response?.data?.message || err.message || '';
       setErrMsg(errMessage);
@@ -247,16 +246,6 @@ function EditProfileInfoForm() {
             </Button> */}
           </Flex>
         </form>
-        {errMsg !== '' && (
-          <Text
-            c={theme.colors.red[5]}
-            size="sm"
-            mt="xs"
-            style={{ textAlign: 'center' }}
-          >
-            {errMsg}
-          </Text>
-        )}
       </Container>
     </>
   );
