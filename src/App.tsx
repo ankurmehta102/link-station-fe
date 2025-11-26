@@ -9,6 +9,7 @@ import Profile from './pages/profile/Profile';
 import Links from './pages/links/Links';
 import Account from './pages/account/Account';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import HomePage from './pages/homepage/HomePage';
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme} defaultColorScheme="dark">
         <Routes>
+          <Route path="/" element={<HomePage />} />
           <Route path="/:userId" element={<MainLayout />}>
             <Route index element={<Profile />} />
             <Route path="links" element={<Links />} />

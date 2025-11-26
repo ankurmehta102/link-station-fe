@@ -76,7 +76,6 @@ function LoginForm() {
           <TextInput
             label="Email"
             placeholder="you@mantine.dev"
-            radius="md"
             {...form.getInputProps('email')}
             onFocus={handleFocus}
           />
@@ -84,7 +83,6 @@ function LoginForm() {
             label="Password"
             placeholder="Your password"
             mt="md"
-            radius="md"
             {...form.getInputProps('password')}
             onFocus={handleFocus}
           />
@@ -101,7 +99,6 @@ function LoginForm() {
             type="submit"
             variant="light"
             mt="xl"
-            radius="md"
             loading={isLoading}
           >
             Sign in

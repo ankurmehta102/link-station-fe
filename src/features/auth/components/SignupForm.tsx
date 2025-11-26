@@ -88,7 +88,6 @@ function SignupForm() {
                 label="First Name"
                 placeholder="Ankur"
                 withAsterisk
-                radius="md"
                 {...form.getInputProps('firstName')}
                 onFocus={handleFocus}
               />
@@ -96,7 +95,6 @@ function SignupForm() {
               <TextInput
                 label="Last Name"
                 placeholder="Mehta"
-                radius="md"
                 {...form.getInputProps('lastName')}
                 onFocus={handleFocus}
               />
@@ -105,7 +103,6 @@ function SignupForm() {
               label="Username"
               placeholder="@ankur102"
               withAsterisk
-              radius="md"
               {...form.getInputProps('username')}
               onFocus={handleFocus}
             />
@@ -113,7 +110,6 @@ function SignupForm() {
               label="Email"
               placeholder="you@mantine.dev"
               withAsterisk
-              radius="md"
               {...form.getInputProps('email')}
               onFocus={handleFocus}
             />
@@ -122,7 +118,6 @@ function SignupForm() {
                 label="Password"
                 placeholder="your password"
                 withAsterisk
-                radius="md"
                 style={{ flex: 1 }}
                 {...form.getInputProps('password')}
                 onFocus={handleFocus}
@@ -131,7 +126,6 @@ function SignupForm() {
                 label="Confirm Password"
                 placeholder="your password"
                 withAsterisk
-                radius="md"
                 style={{ flex: 1 }}
                 {...form.getInputProps('confirmPassword')}
                 onFocus={handleFocus}
@@ -143,7 +137,6 @@ function SignupForm() {
             type="submit"
             variant="light"
             mt="xl"
-            radius="md"
             loading={isLoading}
           >
             Sign up
