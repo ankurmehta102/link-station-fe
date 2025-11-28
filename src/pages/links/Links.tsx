@@ -1,16 +1,25 @@
-import { Container, Divider, LoadingOverlay, Title } from '@mantine/core';
+import {
+  Button,
+  Center,
+  Container,
+  Divider,
+  LoadingOverlay,
+  Title,
+} from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { fetchLinks } from '../../features/links/services/links.services';
 import { useParams } from 'react-router-dom';
 import LinkCard from '../../features/links/components/LinkCard';
-import type { Link } from '../../features/links/types/links.types';
-import { useEffect } from 'react';
+import type { Link } from '../../lib/types';
+import { useEffect, useState } from 'react';
 
 import { useUIStore } from '../../stores/uiStore';
+import AddLinkModal from '../../features/links/components/AddLinkModal';
 
 function Links() {
+  const [isAddLinkModal, setIsLinkModal] = useState(false);
   const { userId } = useParams();
-  const { setErrMsg } = useUIStore();
+  const { isLoading, setErrMsg } = useUIStore();
   const {
     data: links,
     isPending,
@@ -30,9 +39,15 @@ function Links() {
   return (
     <>
       <LoadingOverlay
-        visible={isPending}
+        visible={isPending || isLoading}
         overlayProps={{ blur: 2 }}
         zIndex={99}
+      />
+      <AddLinkModal
+        opened={isAddLinkModal}
+        onClose={() => {
+          setIsLinkModal(false);
+        }}
       />
 
       <Container size={600}>
@@ -40,17 +55,25 @@ function Links() {
           Links
         </Title>
         <Divider mb={40} />
-        <Container fluid>
-          {links && links.length ? (
-            links.map((link: Link) => (
-              <LinkCard key={link.linkId} link={link} />
-            ))
-          ) : (
-            <Title ta="center" fw="bold" order={2}>
-              Add links to show.
-            </Title>
-          )}
-        </Container>
+
+        {links && links.length ? (
+          links.map((link: Link) => <LinkCard key={link.linkId} link={link} />)
+        ) : (
+          <Title ta="center" fw="bold" order={2}>
+            Add links to show.
+          </Title>
+        )}
+        <Center>
+          <Button
+            variant="light"
+            size="md"
+            onClick={() => {
+              setIsLinkModal(true);
+            }}
+          >
+            Add Link
+          </Button>
+        </Center>
       </Container>
     </>
   );

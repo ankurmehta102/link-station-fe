@@ -2,9 +2,10 @@ import { Paper, Text, Flex, Container, Avatar } from '@mantine/core';
 import { IconPencil, IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 import ConfirmModal from './ConfirmModal';
-import type { Link } from '../types/links.types';
+import type { Link } from '../../../lib/types';
 import { deleteLink } from '../services/links.services';
 import { useParams } from 'react-router-dom';
+import { useUIStore } from '../../../stores/uiStore';
 
 const MODAL_STATE_KEYS = {
   CLOSE: 0,
@@ -16,8 +17,9 @@ type LinkCardProps = {
   link: Link;
 };
 
-function LinkCard({ link: { linkName, linkId } }: LinkCardProps) {
+function LinkCard({ link: { linkName, linkId, linkImageUrl } }: LinkCardProps) {
   const [modalKey, setModalKey] = useState(MODAL_STATE_KEYS.CLOSE);
+  const { setIsLoading, setErrMsg, setSuccessMsg } = useUIStore();
 
   const { userId } = useParams();
 
@@ -30,12 +32,17 @@ function LinkCard({ link: { linkName, linkId } }: LinkCardProps) {
   };
 
   const onClickYes = async () => {
+    setModalKey(MODAL_STATE_KEYS.CLOSE);
+    setIsLoading(true);
     try {
       await deleteLink(Number(userId), linkId);
       setModalKey(MODAL_STATE_KEYS.CLOSE);
-    } catch (err) {
-      console.log(err);
+      setSuccessMsg('Link delete successfully');
+    } catch (err: any) {
+      const errMessage = err.response?.data?.message || err.message;
+      setErrMsg(errMessage);
     }
+    setIsLoading(false);
   };
   return (
     <>
@@ -55,9 +62,13 @@ function LinkCard({ link: { linkName, linkId } }: LinkCardProps) {
               flex: 1,
             }}
           >
-            <Avatar color="teal" radius="xl" size="md">
-              {linkName[0].toUpperCase()}
-            </Avatar>
+            <Avatar
+              color="teal"
+              name={linkName}
+              radius="xl"
+              size="md"
+              src={linkImageUrl}
+            />
           </Container>
           <Container
             h="100%"

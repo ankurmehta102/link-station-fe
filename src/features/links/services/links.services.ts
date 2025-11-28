@@ -7,3 +7,13 @@ export const fetchLinks = async (userId: number) => {
 export const deleteLink = async (userId: number, linkId: number) => {
   return (await api.delete(`/users/${userId}/links/${linkId}`)).data;
 };
+
+export const createLink = async (userId: number, data: any) => {
+  return (
+    await api.post(`users/${userId}/links`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  ).data;
+};

@@ -11,3 +11,14 @@ export type User = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type Link = {
+  linkName: string;
+  displayOrder: number;
+  linkUrl: string;
+  userId: number;
+  linkImageUrl: string | null;
+  linkId: number;
+  createdAt: string;
+  updatedAt: string;
+};
