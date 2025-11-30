@@ -14,6 +14,7 @@ import { createLink } from '../services/links.services';
 import type { AddLinkFormValues } from '../types/links.types';
 import { useUIStore } from '../../../stores/uiStore';
 import { useState } from 'react';
+import { useDataStore } from '../../../stores/dataStore';
 
 type AddLinkModalProps = {
   opened: boolean;
@@ -33,6 +34,7 @@ const formSchema = z.object({
 function AddLinkModal({ opened, onClose }: AddLinkModalProps) {
   const [preview, setPreview] = useState<string | null>(null);
   const { setIsLoading, setErrMsg, setSuccessMsg } = useUIStore();
+  const { addLink } = useDataStore();
 
   const { userId } = useParams();
   const form = useForm<AddLinkFormValues>({
@@ -64,7 +66,8 @@ function AddLinkModal({ opened, onClose }: AddLinkModalProps) {
     handleClose();
     setIsLoading(true);
     try {
-      await createLink(Number(userId), formSchema.parse(values));
+      const link = await createLink(Number(userId), formSchema.parse(values));
+      addLink(link);
       setSuccessMsg('Link added successfully');
     } catch (err: any) {
       const errMessage = err.response?.data?.message || err.message;

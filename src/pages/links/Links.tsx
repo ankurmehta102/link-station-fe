@@ -15,19 +15,23 @@ import { useEffect, useState } from 'react';
 
 import { useUIStore } from '../../stores/uiStore';
 import AddLinkModal from '../../features/links/components/AddLinkModal';
+import { useDataStore } from '../../stores/dataStore';
 
 function Links() {
-  const [isAddLinkModal, setIsLinkModal] = useState(false);
+  const [isAddLinkModal, setIsAddLinkModal] = useState(false);
   const { userId } = useParams();
   const { isLoading, setErrMsg } = useUIStore();
-  const {
-    data: links,
-    isPending,
-    error,
-  } = useQuery<Link[], any>({
+  const { links, setLinks } = useDataStore();
+  const { data, isPending, error } = useQuery<Link[], any>({
     queryKey: ['userLinks', userId],
     queryFn: () => fetchLinks(Number(userId)),
   });
+
+  useEffect(() => {
+    if (data) {
+      setLinks(data);
+    }
+  }, [data]);
 
   useEffect(() => {
     if (error) {
@@ -46,7 +50,7 @@ function Links() {
       <AddLinkModal
         opened={isAddLinkModal}
         onClose={() => {
-          setIsLinkModal(false);
+          setIsAddLinkModal(false);
         }}
       />
 
@@ -68,7 +72,7 @@ function Links() {
             variant="light"
             size="md"
             onClick={() => {
-              setIsLinkModal(true);
+              setIsAddLinkModal(true);
             }}
           >
             Add Link

@@ -6,6 +6,7 @@ import type { Link } from '../../../lib/types';
 import { deleteLink } from '../services/links.services';
 import { useParams } from 'react-router-dom';
 import { useUIStore } from '../../../stores/uiStore';
+import { useDataStore } from '../../../stores/dataStore';
 
 const MODAL_STATE_KEYS = {
   CLOSE: 0,
@@ -20,6 +21,7 @@ type LinkCardProps = {
 function LinkCard({ link: { linkName, linkId, linkImageUrl } }: LinkCardProps) {
   const [modalKey, setModalKey] = useState(MODAL_STATE_KEYS.CLOSE);
   const { setIsLoading, setErrMsg, setSuccessMsg } = useUIStore();
+  const { removeLink } = useDataStore();
 
   const { userId } = useParams();
 
@@ -36,6 +38,7 @@ function LinkCard({ link: { linkName, linkId, linkImageUrl } }: LinkCardProps) {
     setIsLoading(true);
     try {
       await deleteLink(Number(userId), linkId);
+      removeLink(linkId);
       setModalKey(MODAL_STATE_KEYS.CLOSE);
       setSuccessMsg('Link delete successfully');
     } catch (err: any) {
