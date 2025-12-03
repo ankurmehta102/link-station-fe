@@ -37,7 +37,7 @@ function LinkForm({
 }: LinkFormProps) {
   const [preview, setPreview] = useState<string | null>(linkImageUrl || null);
   const { setIsLoading, setErrMsg, setSuccessMsg, setModalKey } = useUIStore();
-  const { addLink } = useDataStore();
+  const { addLink, setSelectedLink } = useDataStore();
 
   const form = useForm<LinkFormValues>({
     initialValues: {
@@ -63,6 +63,7 @@ function LinkForm({
     setModalKey(MODAL_KEYS.CLOSE);
     try {
       if (linkId) {
+        setSelectedLink(null);
         await updateLink(Number(userId), linkId, formSchema.parse(values));
         setSuccessMsg('Link updated successfully');
       } else {
