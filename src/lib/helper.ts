@@ -1,7 +1,8 @@
 export const MODAL_KEYS = {
   CLOSE: 0,
-  LINK_EDIT: 1,
-  LINK_DELETE: 2,
+  EDIT_LINK: 1,
+  DELETE_LINK: 2,
+  ADD_LINK: 3,
 };
 
 export const STORAGE_KEYS = {

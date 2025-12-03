@@ -12,16 +12,14 @@ import { fetchLinks } from '../../features/links/services/links.services';
 import { useParams } from 'react-router-dom';
 import LinkCard from '../../features/links/components/LinkCard';
 import type { Link } from '../../lib/types';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { useUIStore } from '../../stores/uiStore';
-import AddLinkModal from '../../features/links/components/AddLinkModal';
 import { useDataStore } from '../../stores/dataStore';
 import LinkForm from '../../features/links/components/LinkForm';
 import { MODAL_KEYS } from '../../lib/helper';
 
 function Links() {
-  const [isAddLinkModal, setIsAddLinkModal] = useState(false);
   const { userId } = useParams();
   const { isLoading, setErrMsg, modalKey, setModalKey } = useUIStore();
   const { links, selectedLink, setLinks } = useDataStore();
@@ -50,22 +48,26 @@ function Links() {
         overlayProps={{ blur: 2 }}
         zIndex={99}
       />
-      <AddLinkModal
-        opened={isAddLinkModal}
-        onClose={() => {
-          setIsAddLinkModal(false);
-        }}
-      />
-
       <Modal
-        opened={modalKey === MODAL_KEYS.LINK_EDIT}
+        opened={modalKey === MODAL_KEYS.ADD_LINK}
         keepMounted={false}
         centered
         onClose={() => setModalKey(MODAL_KEYS.CLOSE)}
         title="Add Link"
       >
+        <LinkForm userId={Number(userId)} />
+      </Modal>
+
+      <Modal
+        opened={modalKey === MODAL_KEYS.EDIT_LINK}
+        keepMounted={false}
+        centered
+        onClose={() => setModalKey(MODAL_KEYS.CLOSE)}
+        title="Edit Link"
+      >
         {selectedLink && (
           <LinkForm
+            userId={Number(userId)}
             linkId={selectedLink.linkId}
             linkName={selectedLink.linkName}
             linkUrl={selectedLink.linkUrl}
@@ -92,7 +94,7 @@ function Links() {
             variant="light"
             size="md"
             onClick={() => {
-              setIsAddLinkModal(true);
+              setModalKey(MODAL_KEYS.ADD_LINK);
             }}
           >
             Add Link

@@ -20,12 +20,12 @@ function LinkCard({ link }: LinkCardProps) {
   const { userId } = useParams();
 
   const handleEdit = () => {
-    setModalKey(MODAL_KEYS.LINK_EDIT);
+    setModalKey(MODAL_KEYS.EDIT_LINK);
     setSelectedLink(link);
   };
 
   const handleDelete = () => {
-    setModalKey(MODAL_KEYS.LINK_DELETE);
+    setModalKey(MODAL_KEYS.DELETE_LINK);
   };
 
   const onClickYes = async () => {
@@ -45,7 +45,7 @@ function LinkCard({ link }: LinkCardProps) {
   return (
     <>
       <ConfirmModal
-        opened={modalKey === MODAL_KEYS.LINK_DELETE}
+        opened={modalKey === MODAL_KEYS.DELETE_LINK}
         onClose={() => setModalKey(MODAL_KEYS.CLOSE)}
         onYes={onClickYes}
       />

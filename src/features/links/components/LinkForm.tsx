@@ -1,16 +1,17 @@
 import { Button, FileInput, Flex, TextInput, Image } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
-import { useParams } from 'react-router-dom';
 import z from 'zod';
 
 import type { LinkFormValues } from '../types/links.types';
 import { useUIStore } from '../../../stores/uiStore';
 import { useState } from 'react';
 import { MODAL_KEYS } from '../../../lib/helper';
-import { updateLink } from '../services/links.services';
+import { createLink, updateLink } from '../services/links.services';
+import { useDataStore } from '../../../stores/dataStore';
 
 type LinkFormProps = {
+  userId: number;
   linkId?: number | null;
   linkName?: string;
   linkUrl?: string;
@@ -28,6 +29,7 @@ const formSchema = z.object({
 });
 
 function LinkForm({
+  userId,
   linkId = null,
   linkName = '',
   linkImageUrl = '',
@@ -35,8 +37,7 @@ function LinkForm({
 }: LinkFormProps) {
   const [preview, setPreview] = useState<string | null>(linkImageUrl || null);
   const { setIsLoading, setErrMsg, setSuccessMsg, setModalKey } = useUIStore();
-
-  const { userId } = useParams();
+  const { addLink } = useDataStore();
 
   const form = useForm<LinkFormValues>({
     initialValues: {
@@ -59,12 +60,16 @@ function LinkForm({
 
   const handleSubmit = async (values: LinkFormValues) => {
     setIsLoading(true);
+    setModalKey(MODAL_KEYS.CLOSE);
     try {
       if (linkId) {
         await updateLink(Number(userId), linkId, formSchema.parse(values));
         setSuccessMsg('Link updated successfully');
+      } else {
+        const link = await createLink(userId, formSchema.parse(values));
+        addLink(link);
+        setSuccessMsg('Link added successfully');
       }
-      setModalKey(MODAL_KEYS.CLOSE);
     } catch (err: any) {
       const errMessage = err.response?.data?.message || err.message;
       setErrMsg(errMessage);
