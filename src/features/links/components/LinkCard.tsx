@@ -1,45 +1,40 @@
 import { Paper, Text, Flex, Container, Avatar } from '@mantine/core';
 import { IconPencil, IconTrash } from '@tabler/icons-react';
-import { useState } from 'react';
 import ConfirmModal from './ConfirmModal';
 import type { Link } from '../../../lib/types';
 import { deleteLink } from '../services/links.services';
 import { useParams } from 'react-router-dom';
 import { useUIStore } from '../../../stores/uiStore';
 import { useDataStore } from '../../../stores/dataStore';
-
-const MODAL_STATE_KEYS = {
-  CLOSE: 0,
-  EDIT: 1,
-  DELETE: 2,
-};
+import { MODAL_KEYS } from '../../../lib/helper';
 
 type LinkCardProps = {
   link: Link;
 };
 
-function LinkCard({ link: { linkName, linkId, linkImageUrl } }: LinkCardProps) {
-  const [modalKey, setModalKey] = useState(MODAL_STATE_KEYS.CLOSE);
-  const { setIsLoading, setErrMsg, setSuccessMsg } = useUIStore();
-  const { removeLink } = useDataStore();
+function LinkCard({ link }: LinkCardProps) {
+  const { modalKey, setIsLoading, setErrMsg, setSuccessMsg, setModalKey } =
+    useUIStore();
+  const { removeLink, setSelectedLink } = useDataStore();
 
   const { userId } = useParams();
 
   const handleEdit = () => {
-    console.log('handleEdit');
+    setModalKey(MODAL_KEYS.LINK_EDIT);
+    setSelectedLink(link);
   };
 
   const handleDelete = () => {
-    setModalKey(MODAL_STATE_KEYS.DELETE);
+    setModalKey(MODAL_KEYS.LINK_DELETE);
   };
 
   const onClickYes = async () => {
-    setModalKey(MODAL_STATE_KEYS.CLOSE);
+    setModalKey(MODAL_KEYS.CLOSE);
     setIsLoading(true);
     try {
-      await deleteLink(Number(userId), linkId);
-      removeLink(linkId);
-      setModalKey(MODAL_STATE_KEYS.CLOSE);
+      await deleteLink(Number(userId), link.linkId);
+      removeLink(link.linkId);
+      setModalKey(MODAL_KEYS.CLOSE);
       setSuccessMsg('Link delete successfully');
     } catch (err: any) {
       const errMessage = err.response?.data?.message || err.message;
@@ -50,8 +45,8 @@ function LinkCard({ link: { linkName, linkId, linkImageUrl } }: LinkCardProps) {
   return (
     <>
       <ConfirmModal
-        opened={modalKey === MODAL_STATE_KEYS.DELETE}
-        onClose={() => setModalKey(MODAL_STATE_KEYS.CLOSE)}
+        opened={modalKey === MODAL_KEYS.LINK_DELETE}
+        onClose={() => setModalKey(MODAL_KEYS.CLOSE)}
         onYes={onClickYes}
       />
       <Paper mb="md" shadow="md" h={70}>
@@ -67,10 +62,10 @@ function LinkCard({ link: { linkName, linkId, linkImageUrl } }: LinkCardProps) {
           >
             <Avatar
               color="teal"
-              name={linkName}
+              name={link.linkName}
               radius="xl"
               size="md"
-              src={linkImageUrl}
+              src={link.linkImageUrl}
             />
           </Container>
           <Container
@@ -83,7 +78,7 @@ function LinkCard({ link: { linkName, linkId, linkImageUrl } }: LinkCardProps) {
             }}
           >
             <Text ta="center" size="lg">
-              {linkName}
+              {link.linkName}
             </Text>
           </Container>
 

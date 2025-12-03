@@ -4,6 +4,7 @@ import {
   Container,
   Divider,
   LoadingOverlay,
+  Modal,
   Title,
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
@@ -16,12 +17,14 @@ import { useEffect, useState } from 'react';
 import { useUIStore } from '../../stores/uiStore';
 import AddLinkModal from '../../features/links/components/AddLinkModal';
 import { useDataStore } from '../../stores/dataStore';
+import LinkForm from '../../features/links/components/LinkForm';
+import { MODAL_KEYS } from '../../lib/helper';
 
 function Links() {
   const [isAddLinkModal, setIsAddLinkModal] = useState(false);
   const { userId } = useParams();
-  const { isLoading, setErrMsg } = useUIStore();
-  const { links, setLinks } = useDataStore();
+  const { isLoading, setErrMsg, modalKey, setModalKey } = useUIStore();
+  const { links, selectedLink, setLinks } = useDataStore();
   const { data, isPending, error } = useQuery<Link[], any>({
     queryKey: ['userLinks', userId],
     queryFn: () => fetchLinks(Number(userId)),
@@ -53,6 +56,23 @@ function Links() {
           setIsAddLinkModal(false);
         }}
       />
+
+      <Modal
+        opened={modalKey === MODAL_KEYS.LINK_EDIT}
+        keepMounted={false}
+        centered
+        onClose={() => setModalKey(MODAL_KEYS.CLOSE)}
+        title="Add Link"
+      >
+        {selectedLink && (
+          <LinkForm
+            linkId={selectedLink.linkId}
+            linkName={selectedLink.linkName}
+            linkUrl={selectedLink.linkUrl}
+            linkImageUrl={selectedLink.linkImageUrl}
+          />
+        )}
+      </Modal>
 
       <Container size={600}>
         <Title ta="start" order={1} pt="md">

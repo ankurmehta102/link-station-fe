@@ -3,14 +3,17 @@ import type { Link } from '../lib/types';
 
 type DataStore = {
   links: Link[];
+  selectedLink: Link | null;
 
   setLinks: (links: Link[]) => void;
   addLink: (links: Link) => void;
   removeLink: (linkId: number) => void;
+  setSelectedLink: (link: Link | null) => void;
 };
 
 export const useDataStore = create<DataStore>((set) => ({
   links: [],
+  selectedLink: null,
 
   setLinks: (links) => set({ links: links }),
   addLink: (link) =>
@@ -21,4 +24,5 @@ export const useDataStore = create<DataStore>((set) => ({
     set((state) => ({
       links: state.links.filter((link) => link.linkId !== linkId),
     })),
+  setSelectedLink: (link) => set({ selectedLink: link }),
 }));
