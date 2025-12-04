@@ -1,4 +1,5 @@
 import { api } from '../../../lib/api-client';
+import type { Link } from '../../../lib/types';
 import type { LinkFormValues } from '../types/links.types';
 
 export const fetchLinks = async (userId: number) => {
@@ -23,7 +24,7 @@ export const updateLink = async (
   userId: number,
   linkId: number,
   data: LinkFormValues,
-) => {
+): Promise<Link> => {
   return (
     await api.patch(`/users/${userId}/links/${linkId}`, data, {
       headers: {
