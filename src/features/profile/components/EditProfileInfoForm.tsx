@@ -115,6 +115,7 @@ function EditProfileInfoForm() {
         formSchema.parse(values),
       );
       const user: User = res.data;
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data));
       form.setValues({
         firstName: user.firstName,
         lastName: user.lastName || '',

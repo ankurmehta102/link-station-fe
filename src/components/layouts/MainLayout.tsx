@@ -1,10 +1,20 @@
-import { AppShell, Burger, Container, Group, NavLink } from '@mantine/core';
+import {
+  AppShell,
+  Avatar,
+  Burger,
+  Container,
+  Flex,
+  Group,
+  NavLink,
+  Text,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { Link, Outlet, useParams } from 'react-router-dom';
 import { IconLink, IconUserCog, IconPencil } from '@tabler/icons-react';
 import AlertNotification from '../ui/AlertNotification';
 import { useUIStore } from '../../stores/uiStore';
+import { getUserFromLocalStorage } from '../../lib/helper';
 
 const NAV_LINK_KEYS = {
   PROFILE: 1,
@@ -33,6 +43,7 @@ function MainLayout() {
   );
 
   const { userId } = useParams();
+  const user = getUserFromLocalStorage();
   const { errMsg, successMsg, setErrMsg, setSuccessMsg } = useUIStore();
 
   return (
@@ -46,20 +57,37 @@ function MainLayout() {
       }}
     >
       <AppShell.Header>
-        <Group h="100%" px="md">
-          <Burger
-            opened={mobileOpened}
-            onClick={toggleMobile}
-            hiddenFrom="sm"
-            size="sm"
-          />
-          <Burger
-            opened={desktopOpened}
-            onClick={toggleDesktop}
-            visibleFrom="sm"
-            size="sm"
-          />
-        </Group>
+        <Flex h="100%" w="100%" justify={'space-between'}>
+          <Group h="100%" px="md" style={{}}>
+            <Burger
+              opened={mobileOpened}
+              onClick={toggleMobile}
+              hiddenFrom="sm"
+              size="sm"
+            />
+            <Burger
+              opened={desktopOpened}
+              onClick={toggleDesktop}
+              visibleFrom="sm"
+              size="sm"
+            />
+            <Text
+              size="xl"
+              fw={700}
+              variant="gradient"
+              gradient={{ from: 'rgba(156, 152, 152, 1)', to: 'cyan', deg: 91 }}
+            >
+              Link Station
+            </Text>
+          </Group>
+          <Group h="100%" px="md">
+            <Avatar
+              src={user?.profilePictureUrl || null}
+              alt="no image here"
+              color="blue"
+            />
+          </Group>
+        </Flex>
       </AppShell.Header>
       <AppShell.Navbar p="md">
         <NavLink

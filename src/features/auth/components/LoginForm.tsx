@@ -20,6 +20,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import classes from './auth.module.css';
 import type { LoginFormValues } from '../types/auth.types';
 import { login } from '../services/auth.services';
+import { STORAGE_KEYS } from '../../../lib/helper';
 
 const formSchema = z.object({
   email: z.string().trim().check(z.email()),
@@ -47,6 +48,8 @@ function LoginForm() {
     setErrMsg('');
     try {
       const res = await login(formSchema.parse(values));
+      console.log(res.data);
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data));
       navigate(`/${res.data.userId}`);
     } catch (err: any) {
       const errMessage = err.response?.data?.message || err.message;

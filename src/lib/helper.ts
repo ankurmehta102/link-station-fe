@@ -7,8 +7,19 @@ export const MODAL_KEYS = {
 
 export const STORAGE_KEYS = {
   PROFILE_PICTURE_URL: 'profilePictureURL',
+  USER: 'user',
 } as const;
 
 export const logout = () => {
   window.location.href = '/login';
+};
+
+export const getUserFromLocalStorage = () => {
+  try {
+    const userString = localStorage.getItem(STORAGE_KEYS.USER);
+    return userString ? JSON.parse(userString) : null;
+  } catch (err) {
+    console.error('Error parsing user data from localStorage', err);
+    return null;
+  }
 };
