@@ -2,7 +2,7 @@ import axios, { type AxiosInstance } from 'axios';
 import { logout } from './helper';
 
 export const api: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: import.meta.env.VITE_BASE_API_URL,
   withCredentials: true,
 });
 
