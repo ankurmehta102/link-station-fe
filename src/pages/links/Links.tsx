@@ -20,7 +20,7 @@ import { useEffect } from 'react';
 import { useUIStore } from '../../stores/uiStore';
 import { useDataStore } from '../../stores/dataStore';
 import LinkForm from '../../features/links/components/LinkForm';
-import { MODAL_KEYS } from '../../lib/helper';
+import { getErrMsg, MODAL_KEYS } from '../../lib/helper';
 import ConfirmModal from '../../features/links/components/ConfirmModal';
 
 function Links() {
@@ -35,7 +35,7 @@ function Links() {
   } = useUIStore();
   const { links, selectedLink, setLinks, removeLink, setSelectedLink } =
     useDataStore();
-  const { data, isPending, error } = useQuery<Link[], any>({
+  const { data, isPending, error } = useQuery<Link[], unknown>({
     queryKey: ['userLinks', userId],
     queryFn: () => fetchLinks(Number(userId)),
   });
@@ -44,14 +44,11 @@ function Links() {
     if (data) {
       setLinks(data);
     }
-  }, [data]);
+  }, [data, setLinks]);
 
   useEffect(() => {
-    if (error) {
-      const errMessage = error.response?.data?.message || error.message || '';
-      setErrMsg(errMessage);
-    }
-  }, [error]);
+    if (error) setErrMsg(getErrMsg(error));
+  }, [error, setErrMsg]);
 
   const onClickYes = async () => {
     setModalKey(MODAL_KEYS.CLOSE);
@@ -63,9 +60,8 @@ function Links() {
       }
       setModalKey(MODAL_KEYS.CLOSE);
       setSuccessMsg('Link delete successfully');
-    } catch (err: any) {
-      const errMessage = err.response?.data?.message || err.message;
-      setErrMsg(errMessage);
+    } catch (err: unknown) {
+      setErrMsg(getErrMsg(err));
     }
     setSelectedLink(null);
     setIsLoading(false);

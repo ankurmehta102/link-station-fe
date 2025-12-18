@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import z from 'zod';
 import { changeEmail } from '../services/account.services';
 import type { EmailModalFormValues } from '../types/account.types';
+import { getErrMsg } from '../../../lib/helper';
 
 type ChangeEmailModalProps = {
   opened: boolean;
@@ -29,7 +30,7 @@ function ChangeEmailModal({ opened, onClose }: ChangeEmailModalProps) {
     validate: zod4Resolver(formSchema),
   });
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: EmailModalFormValues) => {
     setErrMsg('');
     setSuccessMsg('');
     setIsLoading(true);
@@ -37,16 +38,17 @@ function ChangeEmailModal({ opened, onClose }: ChangeEmailModalProps) {
       await changeEmail(Number(userId), formSchema.parse(values).email);
       form.setValues({ email: '' });
       setSuccessMsg('Email changed successfully.');
-    } catch (err: any) {
-      const errMessage = err.response?.data?.message || err.message;
-      setErrMsg(errMessage);
+    } catch (err: unknown) {
+      setErrMsg(getErrMsg(err));
     }
     setIsLoading(false);
   };
+
   const handleFocus = () => {
-    errMsg !== '' && setErrMsg('');
-    successMsg !== '' && setSuccessMsg('');
+    if (errMsg !== '') setErrMsg('');
+    if (successMsg !== '') setSuccessMsg('');
   };
+
   const handleClose = () => {
     onClose();
     setErrMsg('');

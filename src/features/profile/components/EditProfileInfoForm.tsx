@@ -24,7 +24,7 @@ import {
 } from '../services/profile.services';
 import classes from './profile.module.css';
 import type { User } from '../../../lib/types';
-import { STORAGE_KEYS } from '../../../lib/helper';
+import { getErrMsg, STORAGE_KEYS } from '../../../lib/helper';
 import type { EditProfileFormValues } from '../types/profile.type';
 import { useUIStore } from '../../../stores/uiStore';
 
@@ -66,33 +66,33 @@ function EditProfileInfoForm() {
     data: user,
     isPending,
     error,
-  } = useQuery<User, any>({
+  } = useQuery<User, unknown>({
     queryKey: ['userProfile', userId],
     queryFn: () => fetchProfileData(Number(userId)),
   });
 
   useEffect(() => {
-    if (user) {
-      form.setValues({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        displayEmail: user.displayEmail || '',
-        bio: user.bio || '',
-      });
-      setPreview(user.profilePictureUrl);
-      localStorage.setItem(
-        STORAGE_KEYS.PROFILE_PICTURE_URL,
-        user.profilePictureUrl || '',
-      );
-    }
+    if (!user) return;
+
+    form.setValues({
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      displayEmail: user.displayEmail || '',
+      bio: user.bio || '',
+    });
+
+    setPreview(user.profilePictureUrl);
+
+    localStorage.setItem(
+      STORAGE_KEYS.PROFILE_PICTURE_URL,
+      user.profilePictureUrl || '',
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
-    if (error) {
-      const errMessage = error.response?.data?.message || error.message || '';
-      setErrMsg(errMessage);
-    }
-  }, [error]);
+    if (error) setErrMsg(getErrMsg(error));
+  }, [error, setErrMsg]);
 
   const handleFileChange = (file: File | null) => {
     form.setFieldValue('profilePicture', file);
@@ -128,9 +128,8 @@ function EditProfileInfoForm() {
         user.profilePictureUrl || '',
       );
       setSuccessMsg('Details updated successfully!');
-    } catch (err: any) {
-      const errMessage = err.response?.data?.message || err.message || '';
-      setErrMsg(errMessage);
+    } catch (err: unknown) {
+      setErrMsg(getErrMsg(err));
     }
     setIsLoading(false);
   };

@@ -12,6 +12,7 @@ import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { changePassword } from '../services/account.services';
 import { useParams } from 'react-router-dom';
 import type { PasswordModalFormValues } from '../types/account.types';
+import { getErrMsg } from '../../../lib/helper';
 
 type ChangePasswordModalProps = {
   opened: boolean;
@@ -43,7 +44,7 @@ function ChangePasswordModal({ opened, onClose }: ChangePasswordModalProps) {
     validate: zod4Resolver(formSchema),
   });
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: PasswordModalFormValues) => {
     setErrMsg('');
     setSuccessMsg('');
     setIsLoading(true);
@@ -51,15 +52,14 @@ function ChangePasswordModal({ opened, onClose }: ChangePasswordModalProps) {
       await changePassword(Number(userId), formSchema.parse(values).password);
       form.setValues({ password: '', confirmPassword: '' });
       setSuccessMsg('Password changed successfully.');
-    } catch (err: any) {
-      const errMessage = err.response?.data?.message || err.message;
-      setErrMsg(errMessage);
+    } catch (err: unknown) {
+      setErrMsg(getErrMsg(err));
     }
     setIsLoading(false);
   };
   const handleFocus = () => {
-    errMsg !== '' && setErrMsg('');
-    successMsg !== '' && setSuccessMsg('');
+    if (errMsg !== '') setErrMsg('');
+    if (successMsg !== '') setSuccessMsg('');
   };
   const handleClose = () => {
     onClose();

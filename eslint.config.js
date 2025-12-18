@@ -24,7 +24,7 @@ export default defineConfig([
         'error',
         {
           selector: 'variable',
-          format: ['camelCase', UPPER_CASE],
+          format: ['camelCase', 'UPPER_CASE'],
         },
         {
           selector: 'function',
