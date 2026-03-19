@@ -22,3 +22,7 @@ export type Link = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type UserWithLinks = Omit<User, 'createdAt' | 'updatedAt'> & {
+  links: Link[];
+};
