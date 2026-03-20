@@ -68,6 +68,8 @@ function PublicProfilePage() {
                     style={{
                       border: '2px solid white',
                       borderRadius: '50%',
+
+                      aspectRatio: 1 / 1,
                     }}
                   />
                 )}

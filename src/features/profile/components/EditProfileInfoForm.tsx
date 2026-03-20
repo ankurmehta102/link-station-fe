@@ -1,14 +1,14 @@
 import {
   Button,
   Container,
-  Divider,
+  // Divider,
   FileInput,
   Flex,
   LoadingOverlay,
   Stack,
   Textarea,
   TextInput,
-  Title,
+  // Title,
   Image,
 } from '@mantine/core';
 import { z } from 'zod';
@@ -22,7 +22,7 @@ import {
   fetchProfileData,
   updateProfileData,
 } from '../services/profile.services';
-import classes from './profile.module.css';
+// import classes from './profile.module.css';
 import type { User } from '../../../lib/types';
 import { getErrMsg, STORAGE_KEYS } from '../../../lib/helper';
 import type { EditProfileFormValues } from '../types/profile.type';
@@ -146,11 +146,11 @@ function EditProfileInfoForm() {
         overlayProps={{ blur: 2 }}
         zIndex={99}
       />
-      <Container size={600} py="md">
-        <Title ta="start" order={1} className={classes.title}>
+      <Container size={600} pt={40}>
+        {/* <Title ta="start" order={1} className={classes.title}>
           Edit Profile
         </Title>
-        <Divider mb={40} />
+        <Divider mb={40} /> */}
 
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack gap="sm">
@@ -224,6 +224,8 @@ function EditProfileInfoForm() {
             <Textarea
               label="Bio"
               size="md"
+              autosize
+              minRows={3}
               placeholder="Write you bio here."
               {...form.getInputProps('bio')}
               onFocus={handleFocus}

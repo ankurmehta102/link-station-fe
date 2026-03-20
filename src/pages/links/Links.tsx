@@ -2,7 +2,7 @@ import {
   Button,
   Center,
   Container,
-  Divider,
+  // Divider,
   LoadingOverlay,
   Modal,
   Title,
@@ -113,11 +113,11 @@ function Links() {
         )}
       </Modal>
 
-      <Container size={600}>
-        <Title ta="start" order={1} pt="md">
+      <Container size={600} pt={40}>
+        {/* <Title ta="start" order={1} pt="md">
           Links
         </Title>
-        <Divider mb={40} />
+        <Divider mb={40} /> */}
 
         {links && links.length ? (
           links.map((link: Link) => <LinkCard key={link.linkId} link={link} />)
