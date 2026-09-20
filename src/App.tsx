@@ -1,5 +1,6 @@
 import '@mantine/core/styles.css';
-import { MantineProvider, createTheme } from '@mantine/core';
+import './global.css';
+import { createTheme, MantineProvider } from '@mantine/core';
 import { Routes, Route } from 'react-router-dom';
 
 import Signup from './pages/auth/Signup';
@@ -16,23 +17,27 @@ const queryClient = new QueryClient();
 
 function App() {
   const theme = createTheme({
-    components: {
-      NavLink: {
-        styles: {
-          root: {
-            borderRadius: 'var(--mantine-radius-sm)',
-          },
-          label: {
-            fontSize: 'var(--mantine-font-size-md)',
-          },
-        },
-      },
+    primaryColor: 'green',
+
+    colors: {
+      primary: [
+        '#17191a',
+        '#1f2125',
+        '#2a2c30',
+        '#35373a',
+        '#424242',
+        '#3b3b3b',
+        '#2e2e2e',
+        '#242424',
+        '#1f1f1f',
+        '#141414',
+      ],
     },
   });
 
   return (
     <QueryClientProvider client={queryClient}>
-      <MantineProvider theme={theme} defaultColorScheme="dark">
+      <MantineProvider defaultColorScheme="dark" theme={theme}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/u/:username" element={<PublicProfilePage />} />

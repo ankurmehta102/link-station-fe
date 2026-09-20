@@ -7,6 +7,7 @@ import {
   Group,
   NavLink,
   Text,
+  useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
@@ -43,6 +44,7 @@ function MainLayout() {
 
   const { userId } = useParams();
   const user = getUserFromLocalStorage();
+  const theme = useMantineTheme();
 
   return (
     <AppShell
@@ -53,8 +55,9 @@ function MainLayout() {
         breakpoint: 'sm',
         collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
       }}
+      // styles={{ root: theme.colors.primary[1] }}
     >
-      <AppShell.Header>
+      <AppShell.Header bg={theme.colors.primary[0]}>
         <Flex h="100%" w="100%" justify={'space-between'}>
           <Group h="100%" px="md" style={{}}>
             <Burger
@@ -87,7 +90,7 @@ function MainLayout() {
           </Group>
         </Flex>
       </AppShell.Header>
-      <AppShell.Navbar p="md">
+      <AppShell.Navbar p="md" bg={theme.colors.primary[0]}>
         <NavLink
           component={Link}
           to={`/${userId}`}
@@ -95,6 +98,14 @@ function MainLayout() {
           active={active === NAV_LINK_KEYS.PROFILE}
           onClick={() => setActive(NAV_LINK_KEYS.PROFILE)}
           leftSection={<IconPencil size={20} stroke={2.0} />}
+          styles={{
+            root: {
+              borderRadius: 'var(--mantine-radius-sm)',
+            },
+            label: {
+              fontSize: 'var(--mantine-font-size-md)',
+            },
+          }}
         />
         <NavLink
           component={Link}
@@ -103,6 +114,14 @@ function MainLayout() {
           active={active === NAV_LINK_KEYS.LINKS}
           onClick={() => setActive(NAV_LINK_KEYS.LINKS)}
           leftSection={<IconLink size={20} stroke={2.0} />}
+          styles={{
+            root: {
+              borderRadius: 'var(--mantine-radius-sm)',
+            },
+            label: {
+              fontSize: 'var(--mantine-font-size-md)',
+            },
+          }}
         />
         <NavLink
           component={Link}
@@ -111,6 +130,14 @@ function MainLayout() {
           active={active === NAV_LINK_KEYS.ACCOUNT}
           onClick={() => setActive(NAV_LINK_KEYS.ACCOUNT)}
           leftSection={<IconUserCog size={20} stroke={2.0} />}
+          styles={{
+            root: {
+              borderRadius: 'var(--mantine-radius-sm)',
+            },
+            label: {
+              fontSize: 'var(--mantine-font-size-md)',
+            },
+          }}
         />
       </AppShell.Navbar>
       <AppShell.Main>

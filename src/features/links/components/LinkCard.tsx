@@ -1,4 +1,12 @@
-import { Paper, Text, Flex, Container, Avatar } from '@mantine/core';
+import {
+  Paper,
+  Text,
+  Flex,
+  Container,
+  Avatar,
+  useMantineTheme,
+  ActionIcon,
+} from '@mantine/core';
 import { IconPencil, IconTrash } from '@tabler/icons-react';
 import type { Link } from '../../../lib/types';
 import { useUIStore } from '../../../stores/uiStore';
@@ -12,6 +20,7 @@ type LinkCardProps = {
 function LinkCard({ link }: LinkCardProps) {
   const { setModalKey } = useUIStore();
   const { setSelectedLink } = useDataStore();
+  const theme = useMantineTheme();
 
   const handleEdit = () => {
     setModalKey(MODAL_KEYS.EDIT_LINK);
@@ -24,7 +33,7 @@ function LinkCard({ link }: LinkCardProps) {
   };
 
   return (
-    <Paper mb="md" shadow="md" h={70}>
+    <Paper mb="md" shadow="md" h={60} bg={theme.colors.primary[1]}>
       <Flex justify="space-between" align="center" h="100%">
         <Container
           h="100%"
@@ -42,8 +51,11 @@ function LinkCard({ link }: LinkCardProps) {
             size="md"
             src={link.linkImageUrl}
           />
+          <Text ta="center" size="md" ml={'sm'}>
+            {link.linkName}
+          </Text>
         </Container>
-        <Container
+        {/* <Container
           h="100%"
           style={{
             display: 'flex',
@@ -55,7 +67,7 @@ function LinkCard({ link }: LinkCardProps) {
           <Text ta="center" size="lg">
             {link.linkName}
           </Text>
-        </Container>
+        </Container> */}
 
         <Container
           h="100%"
@@ -66,7 +78,7 @@ function LinkCard({ link }: LinkCardProps) {
             flex: 1,
           }}
         >
-          <Avatar
+          {/* <Avatar
             color="blue"
             radius="sm"
             onClick={handleEdit}
@@ -82,7 +94,23 @@ function LinkCard({ link }: LinkCardProps) {
             style={{ cursor: 'pointer' }}
           >
             <IconTrash />
-          </Avatar>
+          </Avatar> */}
+          <ActionIcon
+            variant="subtle"
+            aria-label="More"
+            color="white"
+            onClick={handleEdit}
+          >
+            <IconPencil size={18} />
+          </ActionIcon>
+          <ActionIcon
+            variant="subtle"
+            aria-label="More"
+            color="white"
+            onClick={handleDelete}
+          >
+            <IconTrash size={18} />
+          </ActionIcon>
         </Container>
       </Flex>
     </Paper>
