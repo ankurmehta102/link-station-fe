@@ -6,7 +6,7 @@ import z from 'zod';
 import type { LinkFormValues } from '../types/links.types';
 import { useUIStore } from '../../../stores/uiStore';
 import { useState } from 'react';
-import { MODAL_KEYS } from '../../../lib/helper';
+import { getErrMsg, MODAL_KEYS } from '../../../lib/helper';
 import { createLink, updateLink } from '../services/links.services';
 import { useDataStore } from '../../../stores/dataStore';
 
@@ -76,9 +76,8 @@ function LinkForm({
         addLink(link);
         setSuccessMsg('Link added successfully');
       }
-    } catch (err: any) {
-      const errMessage = err.response?.data?.message || err.message;
-      setErrMsg(errMessage);
+    } catch (err: unknown) {
+      setErrMsg(getErrMsg(err));
     }
     setIsLoading(false);
   };

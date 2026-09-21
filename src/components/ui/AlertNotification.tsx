@@ -37,7 +37,7 @@ function AlertNotification({
     }, interval);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [onClose]);
   return (
     <Container fluid styles={{ root: { padding: 0 } }}>
       <Notification

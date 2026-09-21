@@ -20,7 +20,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import classes from './auth.module.css';
 import type { LoginFormValues } from '../types/auth.types';
 import { login } from '../services/auth.services';
-import { STORAGE_KEYS } from '../../../lib/helper';
+import { getErrMsg, STORAGE_KEYS } from '../../../lib/helper';
 
 const formSchema = z.object({
   email: z.string().trim().check(z.email()),
@@ -51,15 +51,14 @@ function LoginForm() {
       console.log(res.data);
       localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data));
       navigate(`/${res.data.userId}`);
-    } catch (err: any) {
-      const errMessage = err.response?.data?.message || err.message;
-      setErrMsg(errMessage);
+    } catch (err: unknown) {
+      setErrMsg(getErrMsg(err));
     }
     setIsLoading(false);
   };
 
   const handleFocus = () => {
-    errMsg !== '' && setErrMsg('');
+    if (errMsg !== '') setErrMsg('');
   };
   return (
     <Container size={420} my={40}>

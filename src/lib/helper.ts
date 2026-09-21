@@ -1,3 +1,5 @@
+import { isAxiosError } from 'axios';
+
 export const MODAL_KEYS = {
   CLOSE: 0,
   EDIT_LINK: 1,
@@ -22,4 +24,12 @@ export const getUserFromLocalStorage = () => {
     console.error('Error parsing user data from localStorage', err);
     return null;
   }
+};
+
+export const getErrMsg = (err: unknown) => {
+  if (isAxiosError(err)) return err.response?.data?.message ?? err.message;
+
+  if (err instanceof Error) return err.message;
+
+  return 'Something went wrong';
 };

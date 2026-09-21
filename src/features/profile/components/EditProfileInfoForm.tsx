@@ -1,14 +1,14 @@
 import {
   Button,
   Container,
-  Divider,
+  // Divider,
   FileInput,
   Flex,
   LoadingOverlay,
   Stack,
   Textarea,
   TextInput,
-  Title,
+  // Title,
   Image,
 } from '@mantine/core';
 import { z } from 'zod';
@@ -22,9 +22,9 @@ import {
   fetchProfileData,
   updateProfileData,
 } from '../services/profile.services';
-import classes from './profile.module.css';
+// import classes from './profile.module.css';
 import type { User } from '../../../lib/types';
-import { STORAGE_KEYS } from '../../../lib/helper';
+import { getErrMsg, STORAGE_KEYS } from '../../../lib/helper';
 import type { EditProfileFormValues } from '../types/profile.type';
 import { useUIStore } from '../../../stores/uiStore';
 
@@ -66,33 +66,33 @@ function EditProfileInfoForm() {
     data: user,
     isPending,
     error,
-  } = useQuery<User, any>({
+  } = useQuery<User, unknown>({
     queryKey: ['userProfile', userId],
     queryFn: () => fetchProfileData(Number(userId)),
   });
 
   useEffect(() => {
-    if (user) {
-      form.setValues({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        displayEmail: user.displayEmail || '',
-        bio: user.bio || '',
-      });
-      setPreview(user.profilePictureUrl);
-      localStorage.setItem(
-        STORAGE_KEYS.PROFILE_PICTURE_URL,
-        user.profilePictureUrl || '',
-      );
-    }
+    if (!user) return;
+
+    form.setValues({
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      displayEmail: user.displayEmail || '',
+      bio: user.bio || '',
+    });
+
+    setPreview(user.profilePictureUrl);
+
+    localStorage.setItem(
+      STORAGE_KEYS.PROFILE_PICTURE_URL,
+      user.profilePictureUrl || '',
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
-    if (error) {
-      const errMessage = error.response?.data?.message || error.message || '';
-      setErrMsg(errMessage);
-    }
-  }, [error]);
+    if (error) setErrMsg(getErrMsg(error));
+  }, [error, setErrMsg]);
 
   const handleFileChange = (file: File | null) => {
     form.setFieldValue('profilePicture', file);
@@ -128,9 +128,8 @@ function EditProfileInfoForm() {
         user.profilePictureUrl || '',
       );
       setSuccessMsg('Details updated successfully!');
-    } catch (err: any) {
-      const errMessage = err.response?.data?.message || err.message || '';
-      setErrMsg(errMessage);
+    } catch (err: unknown) {
+      setErrMsg(getErrMsg(err));
     }
     setIsLoading(false);
   };
@@ -147,11 +146,11 @@ function EditProfileInfoForm() {
         overlayProps={{ blur: 2 }}
         zIndex={99}
       />
-      <Container size={600} py="md">
-        <Title ta="start" order={1} className={classes.title}>
+      <Container size={600} pt={40}>
+        {/* <Title ta="start" order={1} className={classes.title}>
           Edit Profile
         </Title>
-        <Divider mb={40} />
+        <Divider mb={40} /> */}
 
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack gap="sm">
@@ -225,6 +224,8 @@ function EditProfileInfoForm() {
             <Textarea
               label="Bio"
               size="md"
+              autosize
+              minRows={3}
               placeholder="Write you bio here."
               {...form.getInputProps('bio')}
               onFocus={handleFocus}

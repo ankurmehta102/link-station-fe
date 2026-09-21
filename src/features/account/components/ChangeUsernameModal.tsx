@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import z from 'zod';
 import { changeUsername } from '../services/account.services';
 import type { UsernameModalFormValues } from '../types/account.types';
+import { getErrMsg } from '../../../lib/helper';
 
 type ChangeUsernameModalProps = {
   opened: boolean;
@@ -31,7 +32,7 @@ function ChangeUsernameModal({ opened, onClose }: ChangeUsernameModalProps) {
     validate: zod4Resolver(formSchema),
   });
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: UsernameModalFormValues) => {
     setErrMsg('');
     setSuccessMsg('');
     setIsLoading(true);
@@ -39,15 +40,15 @@ function ChangeUsernameModal({ opened, onClose }: ChangeUsernameModalProps) {
       await changeUsername(Number(userId), formSchema.parse(values).username);
       form.setValues({ username: '' });
       setSuccessMsg('Username changed successfully.');
-    } catch (err: any) {
-      const errMessage = err.response?.data?.message || err.message;
-      setErrMsg(errMessage);
+    } catch (err: unknown) {
+      setErrMsg(getErrMsg(err));
     }
     setIsLoading(false);
   };
+
   const handleFocus = () => {
-    errMsg !== '' && setErrMsg('');
-    successMsg !== '' && setSuccessMsg('');
+    if (errMsg !== '') setErrMsg('');
+    if (successMsg !== '') setSuccessMsg('');
   };
 
   const handleClose = () => {

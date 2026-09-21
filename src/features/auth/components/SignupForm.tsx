@@ -19,6 +19,8 @@ import { zod4Resolver } from 'mantine-form-zod-resolver';
 import classes from './auth.module.css';
 import { useForm } from '@mantine/form';
 import { signup } from '../services/auth.services';
+import { getErrMsg } from '../../../lib/helper';
+import type { SignupFormValues } from '../types/auth.types';
 
 const formSchema = z
   .object({
@@ -39,7 +41,7 @@ function SignupForm() {
   const theme = useMantineTheme();
   const navigate = useNavigate();
 
-  const form = useForm<any>({
+  const form = useForm<SignupFormValues>({
     initialValues: {
       firstName: '',
       lastName: '',
@@ -51,21 +53,20 @@ function SignupForm() {
     validate: zod4Resolver(formSchema),
   });
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: SignupFormValues) => {
     setIsLoading(true);
     setErrMsg('');
     try {
       await signup(formSchema.parse(values));
       navigate('/login');
-    } catch (err: any) {
-      const errMessage = err.response?.data?.message || err.message;
-      setErrMsg(errMessage);
+    } catch (err: unknown) {
+      setErrMsg(getErrMsg(err));
     }
     setIsLoading(false);
   };
 
   const handleFocus = () => {
-    errMsg !== '' && setErrMsg('');
+    if (errMsg !== '') setErrMsg('');
   };
   return (
     <Container size={450} my={40}>
