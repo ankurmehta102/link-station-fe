@@ -12,6 +12,7 @@ import Account from './pages/account/Account';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import HomePage from './pages/homepage/HomePage';
 import PublicProfilePage from './pages/public-profile/PublicProfilePage';
+import { ToastContainer } from 'react-toastora';
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ function App() {
           <Route path="/login" element={<Login />} />
         </Routes>
       </MantineProvider>
+      <ToastContainer theme="dark" />
     </QueryClientProvider>
   );
 }

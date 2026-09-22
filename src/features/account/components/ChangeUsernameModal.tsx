@@ -1,4 +1,4 @@
-import { Button, Modal, TextInput, useMantineTheme, Text } from '@mantine/core';
+import { Button, Modal, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { useState } from 'react';
@@ -7,6 +7,7 @@ import z from 'zod';
 import { changeUsername } from '../services/account.services';
 import type { UsernameModalFormValues } from '../types/account.types';
 import { getErrMsg } from '../../../lib/helper';
+import { toast } from 'react-toastora';
 
 type ChangeUsernameModalProps = {
   opened: boolean;
@@ -18,11 +19,8 @@ const formSchema = z.object({
 });
 
 function ChangeUsernameModal({ opened, onClose }: ChangeUsernameModalProps) {
-  const [errMsg, setErrMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const theme = useMantineTheme();
   const { userId } = useParams();
 
   const form = useForm<UsernameModalFormValues>({
@@ -33,59 +31,29 @@ function ChangeUsernameModal({ opened, onClose }: ChangeUsernameModalProps) {
   });
 
   const handleSubmit = async (values: UsernameModalFormValues) => {
-    setErrMsg('');
-    setSuccessMsg('');
     setIsLoading(true);
     try {
       await changeUsername(Number(userId), formSchema.parse(values).username);
       form.setValues({ username: '' });
-      setSuccessMsg('Username changed successfully.');
+      toast.success('Username changed successfully.', { duration: 5000 });
     } catch (err: unknown) {
-      setErrMsg(getErrMsg(err));
+      toast.error(getErrMsg(err), { duration: 5000 });
     }
     setIsLoading(false);
   };
 
-  const handleFocus = () => {
-    if (errMsg !== '') setErrMsg('');
-    if (successMsg !== '') setSuccessMsg('');
-  };
-
   const handleClose = () => {
     onClose();
-    setErrMsg('');
-    setSuccessMsg('');
     form.setValues({ username: '' });
   };
   return (
     <Modal opened={opened} onClose={handleClose} title="Change Username">
-      {errMsg !== '' && (
-        <Text
-          c={theme.colors.red[5]}
-          size="sm"
-          mt="xs"
-          style={{ textAlign: 'center' }}
-        >
-          {errMsg}
-        </Text>
-      )}
-      {successMsg !== '' && (
-        <Text
-          c={theme.colors.green[5]}
-          size="sm"
-          mt="xs"
-          style={{ textAlign: 'center' }}
-        >
-          {successMsg}
-        </Text>
-      )}
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <TextInput
           label="Username"
           placeholder="@username"
           size="md"
           {...form.getInputProps('username')}
-          onFocus={handleFocus}
         />
         <Button
           fullWidth

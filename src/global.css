@@ -1,3 +1,29 @@
+:root {
+  --toastora-title-font-size: 16px;
+  --toastora-desc-font-size: 12px;
+  --toastora-title-font-weight: 600;
+  --toastora-desc-font-weight: 400;
+  --toastora-title-line-height: 20px;
+  --toastora-desc-line-height: 16px;
+  --toastora-border-radius: 5px;
+  --toastora-border-width: 1px;
+  --toastora-progress-bar-height: 3px;
+
+  /* Success toast — dark theme */
+  --toastora-success-bg-dark: var(--mantine-color-primary-0);
+  --toastora-success-title-dark: var(--mantine-color-green-light-color);
+  --toastora-success-desc-dark: #a1a1aa;
+  --toastora-success-icon-dark: var(--mantine-color-green-light-color);
+  --toastora-success-border-dark: var(--mantine-color-green-light-color);
+  --toastora-success-progress-dark: var(--mantine-color-green-light-color);
+
+  --toastora-error-bg-dark: var(--mantine-color-primary-0);
+  --toastora-error-title-dark: var(--mantine-color-red-light-color);
+  --toastora-error-desc-dark: #a1a1aa;
+  --toastora-error-icon-dark: var(--mantine-color-red-light-color);
+  --toastora-error-border-dark: var(--mantine-color-red-light-color);
+  --toastora-error-progress-dark: var(--mantine-color-red-light-color);
+}
 body {
   background-color: var(--mantine-color-primary-0);
 }

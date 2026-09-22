@@ -1,4 +1,4 @@
-import { Modal, TextInput, useMantineTheme, Text, Button } from '@mantine/core';
+import { Modal, TextInput, Button } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { useState } from 'react';
@@ -7,6 +7,7 @@ import z from 'zod';
 import { changeEmail } from '../services/account.services';
 import type { EmailModalFormValues } from '../types/account.types';
 import { getErrMsg } from '../../../lib/helper';
+import { toast } from 'react-toastora';
 
 type ChangeEmailModalProps = {
   opened: boolean;
@@ -16,11 +17,7 @@ type ChangeEmailModalProps = {
 const formSchema = z.object({ email: z.email().trim() });
 
 function ChangeEmailModal({ opened, onClose }: ChangeEmailModalProps) {
-  const [errMsg, setErrMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  const theme = useMantineTheme();
   const { userId } = useParams();
 
   const form = useForm<EmailModalFormValues>({
@@ -31,60 +28,31 @@ function ChangeEmailModal({ opened, onClose }: ChangeEmailModalProps) {
   });
 
   const handleSubmit = async (values: EmailModalFormValues) => {
-    setErrMsg('');
-    setSuccessMsg('');
     setIsLoading(true);
     try {
       await changeEmail(Number(userId), formSchema.parse(values).email);
       form.setValues({ email: '' });
-      setSuccessMsg('Email changed successfully.');
+      toast.success('Email changed successfully.', { duration: 5000 });
     } catch (err: unknown) {
-      setErrMsg(getErrMsg(err));
+      toast.error(getErrMsg(err), { duration: 5000 });
     }
     setIsLoading(false);
   };
 
-  const handleFocus = () => {
-    if (errMsg !== '') setErrMsg('');
-    if (successMsg !== '') setSuccessMsg('');
-  };
-
   const handleClose = () => {
     onClose();
-    setErrMsg('');
-    setSuccessMsg('');
     form.setValues({ email: '' });
   };
 
   return (
     <Modal opened={opened} onClose={handleClose} title="Change Email">
-      {errMsg !== '' && (
-        <Text
-          c={theme.colors.red[5]}
-          size="sm"
-          mt="xs"
-          style={{ textAlign: 'center' }}
-        >
-          {errMsg}
-        </Text>
-      )}
-      {successMsg !== '' && (
-        <Text
-          c={theme.colors.green[5]}
-          size="sm"
-          mt="xs"
-          style={{ textAlign: 'center' }}
-        >
-          {successMsg}
-        </Text>
-      )}
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <TextInput
           label="Email"
           placeholder="you@mantine.dev"
           size="md"
           {...form.getInputProps('email')}
-          onFocus={handleFocus}
+          // onFocus={handleFocus}
         />
         <Button
           fullWidth

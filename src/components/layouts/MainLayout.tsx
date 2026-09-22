@@ -14,7 +14,6 @@ import { useState } from 'react';
 import { Link, Outlet, useParams } from 'react-router-dom';
 import { IconLink, IconUserCog, IconPencil } from '@tabler/icons-react';
 import { getUserFromLocalStorage } from '../../lib/helper';
-import NotificationLayer from '../ui/NotificationLayer';
 
 const NAV_LINK_KEYS = {
   PROFILE: 1,
@@ -149,7 +148,6 @@ function MainLayout() {
             padding: 0,
           }}
         >
-          <NotificationLayer />
           <Outlet />
         </Container>
       </AppShell.Main>

@@ -9,7 +9,7 @@ import {
   Text,
   TextInput,
   Title,
-  useMantineTheme,
+  // useMantineTheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { z } from 'zod';
@@ -21,6 +21,7 @@ import classes from './auth.module.css';
 import type { LoginFormValues } from '../types/auth.types';
 import { login } from '../services/auth.services';
 import { getErrMsg, STORAGE_KEYS } from '../../../lib/helper';
+import { toast } from 'react-toastora';
 
 const formSchema = z.object({
   email: z.string().trim().check(z.email()),
@@ -29,10 +30,10 @@ const formSchema = z.object({
 });
 
 function LoginForm() {
-  const [errMsg, setErrMsg] = useState('');
+  // const [errMsg, setErrMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const theme = useMantineTheme();
+  // const theme = useMantineTheme();
   const navigate = useNavigate();
   const form = useForm<LoginFormValues>({
     initialValues: {
@@ -45,20 +46,21 @@ function LoginForm() {
 
   const handleSubmit = async (values: LoginFormValues) => {
     setIsLoading(true);
-    setErrMsg('');
+    // setErrMsg('');
     try {
       const res = await login(formSchema.parse(values));
       console.log(res.data);
       localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data));
       navigate(`/${res.data.userId}`);
     } catch (err: unknown) {
-      setErrMsg(getErrMsg(err));
+      // setErrMsg(getErrMsg(err));
+      toast.error(getErrMsg(err), { duration: 5000 });
     }
     setIsLoading(false);
   };
 
   const handleFocus = () => {
-    if (errMsg !== '') setErrMsg('');
+    // if (errMsg !== '') setErrMsg('');
   };
   return (
     <Container size={420} my={40}>
@@ -107,7 +109,7 @@ function LoginForm() {
           </Button>
         </form>
       </Paper>
-      {errMsg !== '' && (
+      {/* {errMsg !== '' && (
         <Text
           c={theme.colors.red[5]}
           size="sm"
@@ -116,7 +118,7 @@ function LoginForm() {
         >
           {errMsg}
         </Text>
-      )}
+      )} */}
     </Container>
   );
 }
