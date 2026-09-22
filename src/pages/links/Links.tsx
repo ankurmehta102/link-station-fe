@@ -2,7 +2,6 @@ import {
   Button,
   Center,
   Container,
-  // Divider,
   LoadingOverlay,
   Modal,
   Title,
@@ -22,17 +21,11 @@ import { useDataStore } from '../../stores/dataStore';
 import LinkForm from '../../features/links/components/LinkForm';
 import { getErrMsg, MODAL_KEYS } from '../../lib/helper';
 import ConfirmModal from '../../features/links/components/ConfirmModal';
+import { toast } from 'react-toastora';
 
 function Links() {
   const { userId } = useParams();
-  const {
-    isLoading,
-    setErrMsg,
-    modalKey,
-    setModalKey,
-    setSuccessMsg,
-    setIsLoading,
-  } = useUIStore();
+  const { isLoading, modalKey, setModalKey, setIsLoading } = useUIStore();
   const { links, selectedLink, setLinks, removeLink, setSelectedLink } =
     useDataStore();
   const { data, isPending, error } = useQuery<Link[], unknown>({
@@ -47,8 +40,8 @@ function Links() {
   }, [data, setLinks]);
 
   useEffect(() => {
-    if (error) setErrMsg(getErrMsg(error));
-  }, [error, setErrMsg]);
+    if (error) toast.error(getErrMsg(error));
+  }, [error]);
 
   const onClickYes = async () => {
     setModalKey(MODAL_KEYS.CLOSE);
@@ -59,9 +52,9 @@ function Links() {
         removeLink(selectedLink.linkId);
       }
       setModalKey(MODAL_KEYS.CLOSE);
-      setSuccessMsg('Link delete successfully');
+      toast.success('Link delete successfully', { duration: 5000 });
     } catch (err: unknown) {
-      setErrMsg(getErrMsg(err));
+      toast.error(getErrMsg(err), { duration: 5000 });
     }
     setSelectedLink(null);
     setIsLoading(false);
@@ -114,11 +107,6 @@ function Links() {
       </Modal>
 
       <Container size={600} pt={40}>
-        {/* <Title ta="start" order={1} pt="md">
-          Links
-        </Title>
-        <Divider mb={40} /> */}
-
         {links && links.length ? (
           links.map((link: Link) => <LinkCard key={link.linkId} link={link} />)
         ) : (

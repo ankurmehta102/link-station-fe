@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { getErrMsg, MODAL_KEYS } from '../../../lib/helper';
 import { createLink, updateLink } from '../services/links.services';
 import { useDataStore } from '../../../stores/dataStore';
+import { toast } from 'react-toastora';
 
 type LinkFormProps = {
   userId: number;
@@ -36,7 +37,7 @@ function LinkForm({
   linkUrl = '',
 }: LinkFormProps) {
   const [preview, setPreview] = useState<string | null>(linkImageUrl || null);
-  const { setIsLoading, setErrMsg, setSuccessMsg, setModalKey } = useUIStore();
+  const { setIsLoading, setModalKey } = useUIStore();
   const { addLink, setSelectedLink, editLink } = useDataStore();
 
   const form = useForm<LinkFormValues>({
@@ -70,14 +71,14 @@ function LinkForm({
           formSchema.parse(values),
         );
         editLink(updatedLink);
-        setSuccessMsg('Link updated successfully');
+        toast.success('Link updated successfully', { duration: 5000 });
       } else {
         const link = await createLink(userId, formSchema.parse(values));
         addLink(link);
-        setSuccessMsg('Link added successfully');
+        toast.success('Link added successfully', { duration: 5000 });
       }
     } catch (err: unknown) {
-      setErrMsg(getErrMsg(err));
+      toast.error(getErrMsg(err), { duration: 5000 });
     }
     setIsLoading(false);
   };

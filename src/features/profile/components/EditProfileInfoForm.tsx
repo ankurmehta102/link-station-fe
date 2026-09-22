@@ -27,6 +27,7 @@ import type { User } from '../../../lib/types';
 import { getErrMsg, STORAGE_KEYS } from '../../../lib/helper';
 import type { EditProfileFormValues } from '../types/profile.type';
 import { useUIStore } from '../../../stores/uiStore';
+import { toast } from 'react-toastora';
 
 const formSchema = z.object({
   firstName: z
@@ -46,9 +47,7 @@ const formSchema = z.object({
 
 function EditProfileInfoForm() {
   const [preview, setPreview] = useState<string | null>(null);
-
-  const { errMsg, isLoading, setErrMsg, setSuccessMsg, setIsLoading } =
-    useUIStore();
+  const { isLoading, setIsLoading } = useUIStore();
   const { userId } = useParams();
 
   const form = useForm<EditProfileFormValues>({
@@ -91,8 +90,8 @@ function EditProfileInfoForm() {
   }, [user]);
 
   useEffect(() => {
-    if (error) setErrMsg(getErrMsg(error));
-  }, [error, setErrMsg]);
+    if (error) toast.error(getErrMsg(error));
+  }, [error]);
 
   const handleFileChange = (file: File | null) => {
     form.setFieldValue('profilePicture', file);
@@ -108,7 +107,6 @@ function EditProfileInfoForm() {
 
   const handleSubmit = async (values: EditProfileFormValues) => {
     setIsLoading(true);
-    setErrMsg('');
     try {
       const res = await updateProfileData(
         Number(userId),
@@ -127,16 +125,11 @@ function EditProfileInfoForm() {
         STORAGE_KEYS.PROFILE_PICTURE_URL,
         user.profilePictureUrl || '',
       );
-      setSuccessMsg('Details updated successfully!');
+      toast.success('Details updated successfully!', { duration: 5000 });
     } catch (err: unknown) {
-      setErrMsg(getErrMsg(err));
+      toast.error(getErrMsg(err), { duration: 5000 });
     }
     setIsLoading(false);
-  };
-
-  // Remove the input error when the user starts typing
-  const handleFocus = () => {
-    if (errMsg) setErrMsg('');
   };
 
   return (
@@ -147,11 +140,6 @@ function EditProfileInfoForm() {
         zIndex={99}
       />
       <Container size={600} pt={40}>
-        {/* <Title ta="start" order={1} className={classes.title}>
-          Edit Profile
-        </Title>
-        <Divider mb={40} /> */}
-
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack gap="sm">
             <Flex
@@ -202,7 +190,7 @@ function EditProfileInfoForm() {
                 size="md"
                 style={{ flex: 1 }}
                 {...form.getInputProps('firstName')}
-                onFocus={handleFocus}
+                // onFocus={handleFocus}
               />
 
               <TextInput
@@ -211,7 +199,7 @@ function EditProfileInfoForm() {
                 size="md"
                 style={{ flex: 1 }}
                 {...form.getInputProps('lastName')}
-                onFocus={handleFocus}
+                // onFocus={handleFocus}
               />
             </Flex>
             <TextInput
@@ -219,7 +207,7 @@ function EditProfileInfoForm() {
               placeholder="you@mantine.dev"
               size="md"
               {...form.getInputProps('displayEmail')}
-              onFocus={handleFocus}
+              // onFocus={handleFocus}
             />
             <Textarea
               label="Bio"
@@ -228,7 +216,7 @@ function EditProfileInfoForm() {
               minRows={3}
               placeholder="Write you bio here."
               {...form.getInputProps('bio')}
-              onFocus={handleFocus}
+              // onFocus={handleFocus}
             />
           </Stack>
           <Flex gap={'xs'}>
@@ -236,16 +224,6 @@ function EditProfileInfoForm() {
             <Button type="submit" variant="light" mt="xl" radius="md" size="md">
               Save
             </Button>{' '}
-            {/* <Button
-              variant="light"
-              mt="xl"
-              radius="md"
-              size="md"
-              color={theme.colors.red[4]}
-              loading={isLoading}
-            >
-              Cancel
-            </Button> */}
           </Flex>
         </form>
       </Container>

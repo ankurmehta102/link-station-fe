@@ -9,12 +9,12 @@ import {
   Text,
   TextInput,
   Title,
-  useMantineTheme,
 } from '@mantine/core';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { z } from 'zod';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
+import { toast } from 'react-toastora';
 
 import classes from './auth.module.css';
 import { useForm } from '@mantine/form';
@@ -36,9 +36,7 @@ const formSchema = z
     path: ['confirmPassword'],
   });
 function SignupForm() {
-  const [errMsg, setErrMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const theme = useMantineTheme();
   const navigate = useNavigate();
 
   const form = useForm<SignupFormValues>({
@@ -55,19 +53,16 @@ function SignupForm() {
 
   const handleSubmit = async (values: SignupFormValues) => {
     setIsLoading(true);
-    setErrMsg('');
     try {
       await signup(formSchema.parse(values));
+      toast.success('Account created successfully', { duration: 5000 });
       navigate('/login');
     } catch (err: unknown) {
-      setErrMsg(getErrMsg(err));
+      toast.error(getErrMsg(err), { duration: 5000 });
     }
     setIsLoading(false);
   };
 
-  const handleFocus = () => {
-    if (errMsg !== '') setErrMsg('');
-  };
   return (
     <Container size={450} my={40}>
       <Title ta="center" className={classes.title}>
@@ -90,14 +85,14 @@ function SignupForm() {
                 placeholder="Ankur"
                 withAsterisk
                 {...form.getInputProps('firstName')}
-                onFocus={handleFocus}
+                // onFocus={handleFocus}
               />
 
               <TextInput
                 label="Last Name"
                 placeholder="Mehta"
                 {...form.getInputProps('lastName')}
-                onFocus={handleFocus}
+                // onFocus={handleFocus}
               />
             </Flex>
             <TextInput
@@ -105,14 +100,14 @@ function SignupForm() {
               placeholder="@ankur102"
               withAsterisk
               {...form.getInputProps('username')}
-              onFocus={handleFocus}
+              // onFocus={handleFocus}
             />
             <TextInput
               label="Email"
               placeholder="you@mantine.dev"
               withAsterisk
               {...form.getInputProps('email')}
-              onFocus={handleFocus}
+              // onFocus={handleFocus}
             />
             <Flex gap={'xs'} justify="space-between">
               <PasswordInput
@@ -121,7 +116,7 @@ function SignupForm() {
                 withAsterisk
                 style={{ flex: 1 }}
                 {...form.getInputProps('password')}
-                onFocus={handleFocus}
+                // onFocus={handleFocus}
               />
               <PasswordInput
                 label="Confirm Password"
@@ -129,7 +124,7 @@ function SignupForm() {
                 withAsterisk
                 style={{ flex: 1 }}
                 {...form.getInputProps('confirmPassword')}
-                onFocus={handleFocus}
+                // onFocus={handleFocus}
               />
             </Flex>
           </Stack>
@@ -144,16 +139,6 @@ function SignupForm() {
           </Button>
         </form>
       </Paper>
-      {errMsg !== '' && (
-        <Text
-          c={theme.colors.red[5]}
-          size="sm"
-          mt="xs"
-          style={{ textAlign: 'center' }}
-        >
-          {errMsg}
-        </Text>
-      )}
     </Container>
   );
 }
